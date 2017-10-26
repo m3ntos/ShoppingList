@@ -11,11 +11,13 @@ import android.view.ViewGroup
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListBinding
+import com.example.rafix.shoppinglist.listdetails.ListDetailsActivity
 import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.fragment_lists_active.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * Created by Rafal on 25.10.2017.
@@ -46,6 +48,7 @@ class ArchivedListsFragment : Fragment() {
                             it.binding.delete.setOnClickListener { deleteItem(item) }
                         }
                     }
+                    onClick { showListDetails(it.binding.item) }
                 }.into(recyclerView)
 
         shoppingListDao.getArchivedShoppingLists()
@@ -73,5 +76,15 @@ class ArchivedListsFragment : Fragment() {
 
     private fun showNoItemsMessage(show: Boolean) {
         listEmpty.visibility = if (show) View.VISIBLE else View.GONE
+    }
+
+    private fun showListDetails(item: ShoppingList?) {
+        item?.let {
+            startActivity<ListDetailsActivity>(
+                    ListDetailsActivity.ARG_LIST_ID to it.id,
+                    ListDetailsActivity.ARG_LIST_NAME to (it.name ?: ""),
+                    ListDetailsActivity.ARG_IS_ARCHIVED to true
+            )
+        }
     }
 }

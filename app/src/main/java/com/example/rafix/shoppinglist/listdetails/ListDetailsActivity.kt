@@ -24,11 +24,14 @@ class ListDetailsActivity : AppCompatActivity() {
     companion object {
         val ARG_LIST_ID = "ARG_LIST_ID"
         val ARG_LIST_NAME = "ARG_LIST_NAME"
+        val ARG_IS_ARCHIVED = "ARG_IS_ARCHIVED"
     }
 
     private val shoppingListDao by lazy { AppDatabase.getInstance(this).shoppingListDao() }
 
     private val shoppingListId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
+    private val isArchived: Boolean by lazy { intent.getBooleanExtra(ARG_IS_ARCHIVED, false) }
+
 
     private lateinit var recyclerViewAdapter: LastAdapter
 
@@ -42,6 +45,7 @@ class ListDetailsActivity : AppCompatActivity() {
         setupRecyclerView()
         observeItemChanges()
 
+        if (isArchived) fab.hide()
         fab.setOnClickListener { addNewShoppingLisItem() }
     }
 
@@ -53,12 +57,23 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        if (isArchived) setupArchivedItemsAdapter()
+        else setupActiveItemsAdapter()
+    }
+
+    private fun setupArchivedItemsAdapter() {
+        recyclerViewAdapter = LastAdapter(items, BR.item)
+                .map<ShoppingListItem>(R.layout.item_shopping_list_item_archived)
+                .into(recyclerView)
+    }
+
+    private fun setupActiveItemsAdapter() {
         recyclerViewAdapter = LastAdapter(items, BR.item)
                 .map<ShoppingListItem, ItemShoppingListItemBinding>(R.layout.item_shopping_list_item) {
                     onBind {
                         val item = it.binding.item
                         it.binding.delete.setOnClickListener { deleteItem(item) }
-                        //it.binding.checkBox.setOnClickListener { checkItem(item) }
                     }
                     onClick { checkItem(it.binding.item) }
                     onLongClick { editItem(it.binding.item) }
