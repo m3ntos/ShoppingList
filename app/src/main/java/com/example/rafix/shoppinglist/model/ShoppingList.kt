@@ -8,7 +8,7 @@ import java.util.*
 
 @Entity
 data class ShoppingList(
-        @PrimaryKey(autoGenerate = true) var foodId: Int = 0,
+        @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var name: String = "",
         var archived: Boolean = false,
         var creationDate: Date = Date()
@@ -18,3 +18,10 @@ data class ShoppingList(
         return format.format(creationDate)
     }
 }
+
+@Entity
+data class ShoppingListItem(
+        @PrimaryKey(autoGenerate = true) var id: Long = 0,
+        var description: String = "",
+        var checked: Boolean = false
+)

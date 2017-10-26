@@ -10,10 +10,12 @@ import android.view.ViewGroup
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListBinding
+import com.example.rafix.shoppinglist.listdetails.ListDetailsActivity
 import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.fragment_lists_active.*
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * Created by Rafal on 25.10.2017.
@@ -40,14 +42,15 @@ class ActiveListsFragment : Fragment() {
                         it.binding.item?.let { item ->
                             it.binding.archive.setOnClickListener { archiveItem(item) }
                             it.binding.delete.setOnClickListener { deleteItem(item) }
-
                         }
                     }
+                    onClick { showListDetails(it.binding.item) }
                 }.into(recyclerView)
 
         shoppingListDao.getActiveShoppingLists()
                 .observe(this, Observer { updateItems(it) })
     }
+
 
     private fun updateItems(newList: List<ShoppingList>?) {
         activeLists.clear()
@@ -68,4 +71,9 @@ class ActiveListsFragment : Fragment() {
     private fun showNoItemsMessage(show: Boolean) {
         listEmpty.visibility = if (show) View.VISIBLE else View.GONE
     }
+
+    private fun showListDetails(item: ShoppingList?) {
+        startActivity<ListDetailsActivity>()
+    }
+
 }

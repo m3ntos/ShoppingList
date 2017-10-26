@@ -9,7 +9,7 @@ import java.util.*
 /**
  * Created by Rafal on 25.10.2017.
  */
-@Database(entities = arrayOf(ShoppingList::class), version = 1)
+@Database(entities = arrayOf(ShoppingList::class, ShoppingListItem::class), version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -20,8 +20,6 @@ abstract class AppDatabase : RoomDatabase() {
                 .allowMainThreadQueries()
                 .build()
     })
-
-
 }
 
 class Converters {
