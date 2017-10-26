@@ -15,8 +15,8 @@ import android.support.v7.util.DiffUtil
 )
 data class ShoppingListItem(
         var shoppingListId: Long,
-        @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var description: String? = null,
+        @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var checked: Boolean = false
 ) {
     class DiffCallback(

@@ -90,7 +90,10 @@ class ListDetailsActivity : AppCompatActivity() {
                 noButtonText = R.string.add_list_item_dialog_cancel,
                 text = null
         ).attachDialogListener({ text ->
-            val item = ShoppingListItem(shoppingListId = shoppingListId, description = text)
+            val emptyItemText = getString(R.string.new_shopping_list_item)
+            val itemText = if (text.isNullOrEmpty()) emptyItemText else text
+
+            val item = ShoppingListItem(shoppingListId, itemText)
             doAsync { shoppingListDao.addOrUpdateListItem(item) }
         }).show(supportFragmentManager, "AddItemDialog")
     }

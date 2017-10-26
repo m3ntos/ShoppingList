@@ -18,6 +18,8 @@
     <string name="add_list_dialog_cancel">Cancel</string>
 
     <!-- ListDetails-->
+    <string name="new_shopping_list_item">New shopping list item</string>
+
     <string name="edit_list_item_dialog_title">Edit item</string>
     <string name="edit_list_item_dialog_hint">Description</string>
     <string name="edit_list_item_dialog_ok">Save</string>
