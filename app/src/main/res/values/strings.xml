@@ -6,7 +6,12 @@
     <string name="aa">dd</string>
 
 
-    <!-- Shopping List -->
+    <!-- Shopping Lists -->
+    <string name="new_shopping_list">New shopping list</string>
+    <string name="no_items">There are no items</string>
+    <string name="no_active_lists">There are no active lists</string>
+    <string name="no_archived_lists">There are no archived lists</string>
+
     <string name="add_list_dialog_title">Add new shopping list</string>
     <string name="add_list_dialog_hint">List name</string>
     <string name="add_list_dialog_ok">Add</string>

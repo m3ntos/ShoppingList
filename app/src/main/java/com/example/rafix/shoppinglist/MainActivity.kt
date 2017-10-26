@@ -1,23 +1,16 @@
 package com.example.rafix.shoppinglist
 
+import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
-
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.widget.EditText
+import android.support.v7.app.AppCompatActivity
 import com.example.rafix.shoppinglist.active.ActiveListsFragment
 import com.example.rafix.shoppinglist.archived.ArchivedListsFragment
-
-import kotlinx.android.synthetic.main.activity_main.*
 import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
-import com.example.rafix.shoppinglist.model.ShoppingListItem
 import com.example.rafix.shoppinglist.utils.EditTextDialog
-import kotlinx.android.synthetic.main.dialog_add_shopping_list.*
-import org.jetbrains.anko.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                 noButtonText = R.string.add_list_dialog_cancel,
                 text = null
         ).attachDialogListener({ text ->
-            val name = if (text.isNullOrEmpty()) "New shopping list" else text
+            val name = if (text.isNullOrEmpty()) getString(R.string.new_shopping_list) else text
             shoppingListDao.addShoppingList(ShoppingList(name = name))
         }).show(supportFragmentManager, "AddListDialog")
     }

@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="There are no items"
+        android:text="@string/no_items"
         app:layout_anchor="@+id/recyclerView"
         app:layout_anchorGravity="center" />
 
