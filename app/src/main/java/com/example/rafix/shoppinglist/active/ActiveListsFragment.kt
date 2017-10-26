@@ -51,7 +51,6 @@ class ActiveListsFragment : Fragment() {
                 .observe(this, Observer { updateItems(it) })
     }
 
-
     private fun updateItems(newList: List<ShoppingList>?) {
         activeLists.clear()
         newList?.let { activeLists.addAll(it) }
@@ -73,7 +72,11 @@ class ActiveListsFragment : Fragment() {
     }
 
     private fun showListDetails(item: ShoppingList?) {
-        startActivity<ListDetailsActivity>()
+        item?.let {
+            startActivity<ListDetailsActivity>(
+                    ListDetailsActivity.ARG_LIST_ID to it.id,
+                    ListDetailsActivity.ARG_LIST_NAME to it.name
+            )
+        }
     }
-
 }
