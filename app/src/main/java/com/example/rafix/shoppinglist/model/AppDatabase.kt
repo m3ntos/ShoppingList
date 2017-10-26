@@ -17,7 +17,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object : SingletonHolder<AppDatabase, Context>({
         Room.databaseBuilder(it.applicationContext, AppDatabase::class.java, "shopping-list.db")
-                .allowMainThreadQueries()
                 .build()
     })
 }

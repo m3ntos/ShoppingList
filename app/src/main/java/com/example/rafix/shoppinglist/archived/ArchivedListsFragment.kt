@@ -15,6 +15,7 @@ import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.fragment_lists_active.*
+import org.jetbrains.anko.doAsync
 
 /**
  * Created by Rafal on 25.10.2017.
@@ -63,11 +64,11 @@ class ArchivedListsFragment : Fragment() {
 
     private fun unarchiveItem(item: ShoppingList) {
         item.archived = false
-        shoppingListDao.updateShoppingList(item)
+        doAsync { shoppingListDao.updateShoppingList(item) }
     }
 
     private fun deleteItem(item: ShoppingList) {
-        shoppingListDao.deleteShoppingList(item)
+        doAsync { shoppingListDao.deleteShoppingList(item) }
     }
 
     private fun showNoItemsMessage(show: Boolean) {

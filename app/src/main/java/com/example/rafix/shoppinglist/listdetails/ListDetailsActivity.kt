@@ -15,6 +15,7 @@ import com.example.rafix.shoppinglist.model.ShoppingListItem
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
+import org.jetbrains.anko.doAsync
 
 
 class ListDetailsActivity : AppCompatActivity() {
@@ -87,7 +88,7 @@ class ListDetailsActivity : AppCompatActivity() {
                 text = null
         ).attachDialogListener({ text ->
             val item = ShoppingListItem(shoppingListId = shoppingListId, description = text)
-            shoppingListDao.addOrUpdateListItem(item)
+            doAsync { shoppingListDao.addOrUpdateListItem(item) }
         }).show(supportFragmentManager, "AddItemDialog")
     }
 
@@ -107,13 +108,13 @@ class ListDetailsActivity : AppCompatActivity() {
     }
 
     private fun deleteItem(item: ShoppingListItem?) {
-        item?.let { shoppingListDao.deleteShoppingListItem(it) }
+        item?.let { doAsync { shoppingListDao.deleteShoppingListItem(it) } }
     }
 
     private fun checkItem(item: ShoppingListItem?) {
         item?.let {
             it.checked = !it.checked
-            shoppingListDao.addOrUpdateListItem(it)
+            doAsync { shoppingListDao.addOrUpdateListItem(it) }
         }
     }
 

@@ -11,6 +11,7 @@ import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 text = null
         ).attachDialogListener({ text ->
             val name = if (text.isNullOrEmpty()) getString(R.string.new_shopping_list) else text
-            shoppingListDao.addShoppingList(ShoppingList(name = name))
+            doAsync { shoppingListDao.addShoppingList(ShoppingList(name = name)) }
         }).show(supportFragmentManager, "AddListDialog")
     }
 
