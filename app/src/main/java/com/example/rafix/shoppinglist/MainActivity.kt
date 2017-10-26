@@ -14,6 +14,8 @@ import com.example.rafix.shoppinglist.archived.ArchivedListsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingList
+import com.example.rafix.shoppinglist.model.ShoppingListItem
+import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.dialog_add_shopping_list.*
 import org.jetbrains.anko.*
 
@@ -39,26 +41,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addNewShoppingList() {
-        var listTitle: EditText? = null
-
-        alert {
-            title = "Add new list"
-            customView {
-                linearLayout {
-                    padding = dip(16)
-                    listTitle = editText {
-                        hint = "List name"
-                    }.lparams(matchParent)
-                }
-            }
-            positiveButton("Add") {
-                listTitle?.let {
-                    val name = if (it.text.isEmpty()) "New shopping list" else it.text.toString()
-                    shoppingListDao.addShoppingList(ShoppingList(name = name))
-                }
-            }
-            negativeButton("Cancel") { }
-        }.show()
+        EditTextDialog.newInstance(
+                title = R.string.add_list_dialog_title,
+                hint = R.string.add_list_dialog_hint,
+                yesButtonText = R.string.add_list_dialog_ok,
+                noButtonText = R.string.add_list_dialog_cancel,
+                text = null
+        ).attachDialogListener({ text ->
+            val name = if (text.isNullOrEmpty()) "New shopping list" else text
+            shoppingListDao.addShoppingList(ShoppingList(name = name))
+        }).show(supportFragmentManager, "AddListDialog")
     }
 
     inner class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

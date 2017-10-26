@@ -10,7 +10,7 @@ import java.util.*
 @Entity
 data class ShoppingList(
         @PrimaryKey(autoGenerate = true) var id: Long = 0,
-        var name: String = "",
+        var name: String? = null,
         var archived: Boolean = false,
         var creationDate: Date = Date()
 ) {
@@ -27,6 +27,6 @@ data class ShoppingList(
 data class ShoppingListItem(
         var shoppingListId: Long,
         @PrimaryKey(autoGenerate = true) var id: Long = 0,
-        var description: String = "",
+        var description:  String? = null,
         var checked: Boolean = false
 )

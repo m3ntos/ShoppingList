@@ -12,6 +12,7 @@ import com.example.rafix.shoppinglist.databinding.ItemShoppingListItemBinding
 import com.example.rafix.shoppinglist.model.AppDatabase
 import com.example.rafix.shoppinglist.model.ShoppingListAndItems
 import com.example.rafix.shoppinglist.model.ShoppingListItem
+import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
 import org.jetbrains.anko.*
@@ -55,82 +56,15 @@ class ListDetailsActivity : AppCompatActivity() {
                         val item = it.binding.item
                         it.binding.delete.setOnClickListener { deleteItem(item) }
                         it.binding.checkBox.setOnClickListener { checkItem(item) }
-
                     }
                     onLongClick { editItem(it.binding.item) }
                 }
                 .into(recyclerView)
     }
 
-
-    private fun deleteItem(item: ShoppingListItem?) {
-        item?.let { shoppingListDao.deleteShoppingListItem(it) }
-    }
-
-    private fun checkItem(item: ShoppingListItem?) {
-        item?.let {
-            it.checked = !it.checked
-            shoppingListDao.addOrUpdateListItem(it)
-        }
-    }
-
-    private fun editItem(item: ShoppingListItem?) {
-        item?.let {
-            var listTitle: EditText? = null
-
-            alert {
-                title = "edit item"
-                customView {
-                    linearLayout {
-                        padding = dip(16)
-                        listTitle = editText {
-                            hint = "description"
-                            setText(item.description)
-                        }.lparams(matchParent)
-                    }
-                }
-                positiveButton("Save") {
-                    listTitle?.let {
-                        val name = it.text.toString()
-                        item.description = name
-                        shoppingListDao.addOrUpdateListItem(item)
-                    }
-                }
-                negativeButton("Cancel") { }
-            }.show()
-        }
-    }
-
     private fun observeItemChanges() {
         shoppingListDao.getShoppingListAndItems(shoppingListId).observe(this,
                 Observer { updateItems(it) })
-    }
-
-    private fun addNewShoppingLisItem() {
-        var listTitle: EditText? = null
-
-        alert {
-            title = "Add new item"
-            customView {
-                linearLayout {
-                    padding = dip(16)
-                    listTitle = editText {
-                        hint = "description"
-                    }.lparams(matchParent)
-                }
-            }
-            positiveButton("Add") {
-                listTitle?.let {
-                    val name = it.text.toString()
-                    shoppingListDao.addOrUpdateListItem(ShoppingListItem(shoppingListId = shoppingListId, description = name))
-                }
-            }
-            negativeButton("Cancel") { }
-        }.show()
-    }
-
-    private fun onItemDeleteClick(item: ShoppingListItem) {
-
     }
 
     private fun updateItems(newList: ShoppingListAndItems?) {
@@ -143,7 +77,46 @@ class ListDetailsActivity : AppCompatActivity() {
         showNoItemsMessage(items.isEmpty())
     }
 
-    private fun setToolbarTitle(title: String) {
+    private fun addNewShoppingLisItem() {
+        EditTextDialog.newInstance(
+                title = R.string.add_list_item_dialog_title,
+                hint = R.string.add_list_item_dialog_hint,
+                yesButtonText = R.string.add_list_item_dialog_ok,
+                noButtonText = R.string.add_list_item_dialog_cancel,
+                text = null
+        ).attachDialogListener({ text ->
+            val item = ShoppingListItem(shoppingListId = shoppingListId, description = text)
+            shoppingListDao.addOrUpdateListItem(item)
+        }).show(supportFragmentManager, "AddItemDialog")
+    }
+
+    private fun editItem(item: ShoppingListItem?) {
+        item?.let {
+            EditTextDialog.newInstance(
+                    title = R.string.edit_list_item_dialog_title,
+                    hint = R.string.edit_list_item_dialog_hint,
+                    yesButtonText = R.string.edit_list_item_dialog_ok,
+                    noButtonText = R.string.edit_list_item_dialog_cancel,
+                    text = item.description
+            ).attachDialogListener({ text ->
+                item.description = text
+                shoppingListDao.addOrUpdateListItem(item)
+            }).show(supportFragmentManager, "EditItemDialog")
+        }
+    }
+
+    private fun deleteItem(item: ShoppingListItem?) {
+        item?.let { shoppingListDao.deleteShoppingListItem(it) }
+    }
+
+    private fun checkItem(item: ShoppingListItem?) {
+        item?.let {
+            it.checked = !it.checked
+            shoppingListDao.addOrUpdateListItem(it)
+        }
+    }
+
+    private fun setToolbarTitle(title: String?) {
         toolbar_layout.title = title
     }
 

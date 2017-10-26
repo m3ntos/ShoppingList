@@ -75,7 +75,7 @@ class ActiveListsFragment : Fragment() {
         item?.let {
             startActivity<ListDetailsActivity>(
                     ListDetailsActivity.ARG_LIST_ID to it.id,
-                    ListDetailsActivity.ARG_LIST_NAME to it.name
+                    ListDetailsActivity.ARG_LIST_NAME to (it.name ?: "")
             )
         }
     }

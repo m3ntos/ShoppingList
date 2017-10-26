@@ -3,5 +3,24 @@
     <string name="tab_text_1">Active</string>
     <string name="tab_text_2">Archived</string>
     <string name="action_settings">Settings</string>
+    <string name="aa">dd</string>
+
+
+    <!-- Shopping List -->
+    <string name="add_list_dialog_title">Add new shopping list</string>
+    <string name="add_list_dialog_hint">List name</string>
+    <string name="add_list_dialog_ok">Add</string>
+    <string name="add_list_dialog_cancel">Cancel</string>
+
+    <!-- ListDetails-->
+    <string name="edit_list_item_dialog_title">Edit item</string>
+    <string name="edit_list_item_dialog_hint">Description</string>
+    <string name="edit_list_item_dialog_ok">Save</string>
+    <string name="edit_list_item_dialog_cancel">Cancel</string>
+
+    <string name="add_list_item_dialog_title">Add new item</string>
+    <string name="add_list_item_dialog_hint">Description</string>
+    <string name="add_list_item_dialog_ok">Add</string>
+    <string name="add_list_item_dialog_cancel">Cancel</string>
 
 </resources>
