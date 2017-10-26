@@ -1,60 +1,65 @@
 package com.example.rafix.shoppinglist
 
 import android.support.design.widget.TabLayout
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.support.v7.app.AlertDialog
+import android.widget.EditText
 import com.example.rafix.shoppinglist.active.ActiveListsFragment
 import com.example.rafix.shoppinglist.archived.ArchivedListsFragment
 
 import kotlinx.android.synthetic.main.activity_main.*
+import com.example.rafix.shoppinglist.model.AppDatabase
+import com.example.rafix.shoppinglist.model.ShoppingList
+import kotlinx.android.synthetic.main.dialog_add_shopping_list.*
+import org.jetbrains.anko.*
+
 
 class MainActivity : AppCompatActivity() {
 
-    private var viewPagerAdapter: PagerAdapter? = null
+    private val shoppingListDao by lazy { AppDatabase.getInstance(this).shoppingListDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
+        setupTabs()
 
-        viewPagerAdapter = PagerAdapter(supportFragmentManager)
-        container.adapter = viewPagerAdapter
+        fab.setOnClickListener { addNewShoppingList() }
+    }
 
+    private fun setupTabs() {
+        container.adapter = PagerAdapter(supportFragmentManager)
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
     }
 
+    private fun addNewShoppingList() {
+        var listTitle: EditText? = null
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+        alert {
+            title = "Add new list"
+            customView {
+                linearLayout {
+                    padding = dip(16)
+                    listTitle = editText {
+                        hint = "List name"
+                    }.lparams(matchParent)
+                }
+            }
+            positiveButton("Add") {
+                listTitle?.let {
+                    val name = if (it.text.isEmpty()) "New shopping list" else it.text.toString()
+                    shoppingListDao.addShoppingList(ShoppingList(name = name))
+                }
+            }
+            negativeButton("Cancel") { }
+        }.show()
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        if (id == R.id.action_settings) {
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
 
     inner class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
