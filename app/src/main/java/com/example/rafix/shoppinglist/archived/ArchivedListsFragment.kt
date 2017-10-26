@@ -3,6 +3,7 @@ package com.example.rafix.shoppinglist.archived
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,8 @@ class ArchivedListsFragment : Fragment() {
 
     private val archivedLists = ArrayList<ShoppingList>()
 
+    private lateinit var recyclerViewAdapter: LastAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_lists_archived, container, false)
@@ -34,7 +37,7 @@ class ArchivedListsFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        LastAdapter(archivedLists, BR.item)
+        recyclerViewAdapter = LastAdapter(archivedLists, BR.item)
                 .map<ShoppingList, ItemShoppingListBinding>(R.layout.item_shopping_list) {
                     onBind {
                         it.binding.item?.let { item ->
@@ -49,9 +52,12 @@ class ArchivedListsFragment : Fragment() {
     }
 
     private fun updateItems(newList: List<ShoppingList>?) {
-        archivedLists.clear()
-        newList?.let { archivedLists.addAll(it) }
-        recyclerView.adapter.notifyDataSetChanged()
+        val newItemsList = newList ?: ArrayList()
+
+        val diff = DiffUtil.calculateDiff(ShoppingList.DiffCallback(archivedLists, newItemsList))
+        archivedLists.apply { clear() }.addAll(newItemsList)
+        diff.dispatchUpdatesTo(recyclerViewAdapter)
+
         showNoItemsMessage(archivedLists.isEmpty())
     }
 

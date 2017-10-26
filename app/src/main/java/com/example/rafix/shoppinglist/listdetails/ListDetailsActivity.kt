@@ -3,9 +3,9 @@ package com.example.rafix.shoppinglist.listdetails
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.EditText
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListItemBinding
@@ -15,7 +15,6 @@ import com.example.rafix.shoppinglist.model.ShoppingListItem
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
-import org.jetbrains.anko.*
 
 
 class ListDetailsActivity : AppCompatActivity() {
@@ -28,6 +27,8 @@ class ListDetailsActivity : AppCompatActivity() {
     private val shoppingListDao by lazy { AppDatabase.getInstance(this).shoppingListDao() }
 
     private val shoppingListId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
+
+    private lateinit var recyclerViewAdapter: LastAdapter
 
     private val items = ArrayList<ShoppingListItem>()
 
@@ -50,7 +51,7 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
-        LastAdapter(items, BR.item)
+        recyclerViewAdapter = LastAdapter(items, BR.item)
                 .map<ShoppingListItem, ItemShoppingListItemBinding>(R.layout.item_shopping_list_item) {
                     onBind {
                         val item = it.binding.item
@@ -67,13 +68,13 @@ class ListDetailsActivity : AppCompatActivity() {
                 Observer { updateItems(it) })
     }
 
-    private fun updateItems(newList: ShoppingListAndItems?) {
-        items.clear()
-        newList?.let {
-            items.addAll(it.items)
-            setToolbarTitle(it.shoppingList.name)
-        }
-        recyclerView.adapter.notifyDataSetChanged()
+    private fun updateItems(listAndItems: ShoppingListAndItems?) {
+        val newItemsList = listAndItems?.items ?: ArrayList()
+
+        val diff = DiffUtil.calculateDiff(ShoppingListItem.DiffCallback(items, newItemsList))
+        items.apply { clear() }.addAll(newItemsList)
+        diff.dispatchUpdatesTo(recyclerViewAdapter)
+
         showNoItemsMessage(items.isEmpty())
     }
 
