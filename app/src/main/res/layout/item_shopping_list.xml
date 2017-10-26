@@ -45,12 +45,24 @@
             android:id="@+id/delete"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:padding="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_delete" />
+
+        <ImageView
+            android:id="@+id/unarchive"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="16dp"
+            android:visibility="@{item.archived}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_unarchive" />
 
         <ImageView
             android:id="@+id/archive"
@@ -58,10 +70,12 @@
             android:layout_height="56dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="16dp"
+            android:visibility="@{!item.archived}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/delete"
+            app:layout_constraintRight_toLeftOf="@+id/unarchive"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_archive" />
+
 
     </android.support.constraint.ConstraintLayout>
 
