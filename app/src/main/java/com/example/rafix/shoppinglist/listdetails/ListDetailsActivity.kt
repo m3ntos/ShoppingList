@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
@@ -57,8 +58,9 @@ class ListDetailsActivity : AppCompatActivity() {
                     onBind {
                         val item = it.binding.item
                         it.binding.delete.setOnClickListener { deleteItem(item) }
-                        it.binding.checkBox.setOnClickListener { checkItem(item) }
+                        //it.binding.checkBox.setOnClickListener { checkItem(item) }
                     }
+                    onClick { checkItem(it.binding.item) }
                     onLongClick { editItem(it.binding.item) }
                 }
                 .into(recyclerView)
@@ -70,6 +72,7 @@ class ListDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateItems(listAndItems: ShoppingListAndItems?) {
+        Log.d("update", "items updated")
         val newItemsList = listAndItems?.items ?: ArrayList()
 
         val diff = DiffUtil.calculateDiff(ShoppingListItem.DiffCallback(items, newItemsList))
@@ -101,8 +104,7 @@ class ListDetailsActivity : AppCompatActivity() {
                     noButtonText = R.string.edit_list_item_dialog_cancel,
                     text = item.description
             ).attachDialogListener({ text ->
-                item.description = text
-                shoppingListDao.addOrUpdateListItem(item)
+                doAsync { shoppingListDao.addOrUpdateListItem(item.copy(description = text)) }
             }).show(supportFragmentManager, "EditItemDialog")
         }
     }
@@ -113,8 +115,7 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private fun checkItem(item: ShoppingListItem?) {
         item?.let {
-            it.checked = !it.checked
-            doAsync { shoppingListDao.addOrUpdateListItem(it) }
+            doAsync { shoppingListDao.addOrUpdateListItem(it.copy(checked = !it.checked)) }
         }
     }
 
