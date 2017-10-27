@@ -1,4 +1,4 @@
-package com.example.rafix.shoppinglist.screens.active
+package com.example.rafix.shoppinglist.screens.main
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
@@ -21,17 +21,17 @@ import org.jetbrains.anko.doAsync
 /**
  * Created by Rafal on 25.10.2017.
  */
-class ActiveListsFragment : Fragment() {
+class ArchivedListsFragment : Fragment() {
 
     private val shoppingListDao by lazy { AppDatabase.getInstance(activity).shoppingListDao() }
 
-    private val activeLists = ArrayList<ShoppingList>()
+    private val archivedLists = ArrayList<ShoppingList>()
 
     private lateinit var recyclerViewAdapter: LastAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_active_lists, container, false)
+        return inflater.inflate(R.layout.fragment_archived_lists, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -39,33 +39,33 @@ class ActiveListsFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerViewAdapter = LastAdapter(activeLists, BR.item)
+        recyclerViewAdapter = LastAdapter(archivedLists, BR.item)
                 .map<ShoppingList, ItemShoppingListBinding>(R.layout.item_shopping_list) {
                     onBind {
                         it.binding.item?.let { item ->
-                            it.binding.archive.setOnClickListener { archiveItem(item) }
+                            it.binding.unarchive.setOnClickListener { unarchiveItem(item) }
                             it.binding.delete.setOnClickListener { deleteItem(item) }
                         }
                     }
                     onClick { showListDetails(it.binding.item) }
                 }.into(recyclerView)
 
-        shoppingListDao.getActiveShoppingLists()
+        shoppingListDao.getArchivedShoppingLists()
                 .observe(this, Observer { updateItems(it) })
     }
 
     private fun updateItems(newList: List<ShoppingList>?) {
         val newItemsList = newList ?: ArrayList()
 
-        val diff = DiffUtil.calculateDiff(ShoppingList.DiffCallback(activeLists, newItemsList))
-        activeLists.apply { clear() }.addAll(newItemsList)
+        val diff = DiffUtil.calculateDiff(ShoppingList.DiffCallback(archivedLists, newItemsList))
+        archivedLists.apply { clear() }.addAll(newItemsList)
         diff.dispatchUpdatesTo(recyclerViewAdapter)
 
-        showNoItemsMessage(activeLists.isEmpty())
+        showNoItemsMessage(archivedLists.isEmpty())
     }
 
-    private fun archiveItem(item: ShoppingList) {
-        item.archived = true
+    private fun unarchiveItem(item: ShoppingList) {
+        item.archived = false
         doAsync { shoppingListDao.updateShoppingList(item) }
     }
 
@@ -82,6 +82,7 @@ class ActiveListsFragment : Fragment() {
             ListDetailsActivity.start(activity) {
                 it.listId = item.id
                 it.listName = item.name
+                it.isArchived = true
             }
         }
     }

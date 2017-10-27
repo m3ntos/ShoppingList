@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".screens.MainActivity"
+            android:name=".screens.main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,11 +21,11 @@
         </activity>
         <activity
             android:name="com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity"
-            android:parentActivityName=".screens.MainActivity"
+            android:parentActivityName=".screens.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.rafix.shoppinglist.screens.MainActivity" />
+                android:value="com.example.rafix.shoppinglist.screens.main.MainActivity" />
         </activity>
     </application>
 

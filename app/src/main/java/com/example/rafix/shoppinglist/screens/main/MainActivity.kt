@@ -1,4 +1,4 @@
-package com.example.rafix.shoppinglist.screens
+package com.example.rafix.shoppinglist.screens.main
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.data.AppDatabase
 import com.example.rafix.shoppinglist.data.model.ShoppingList
-import com.example.rafix.shoppinglist.screens.active.ActiveListsFragment
-import com.example.rafix.shoppinglist.screens.archived.ArchivedListsFragment
 import com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.activity_main.*
