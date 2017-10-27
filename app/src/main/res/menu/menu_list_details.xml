@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".screens.listdetails.ListDetailsActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_edit"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_edit"
+        android:icon="@drawable/ic_edit_black_24dp"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+
 </menu>

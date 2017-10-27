@@ -18,6 +18,9 @@ interface ShoppingListDao {
     @Query("SELECT * from shoppingList WHERE archived ORDER BY creationDate DESC")
     fun getArchivedShoppingLists(): LiveData<List<ShoppingList>>
 
+    @Query("SELECT * from shoppingList WHERE id = :id")
+    fun getShoppingList(id: Long): ShoppingList
+
     @Insert
     fun addShoppingList(list: ShoppingList)
 

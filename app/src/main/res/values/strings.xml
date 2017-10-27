@@ -13,21 +13,27 @@
     <string name="no_archived_lists">There are no archived lists</string>
 
     <string name="add_list_dialog_title">Add new shopping list</string>
-    <string name="add_list_dialog_hint">List name</string>
     <string name="add_list_dialog_ok">Add</string>
     <string name="add_list_dialog_cancel">Cancel</string>
+
+    <string name="edit_list_dialog_title">Edit shopping list name</string>
+    <string name="edit_item_dialog_ok">Save</string>
+    <string name="edit_item_dialog_cancel">Cancel</string>
+
+    <string name="list_dialog_hint">list name</string>
 
     <!-- ListDetails-->
     <string name="new_shopping_list_item">New shopping list item</string>
 
     <string name="edit_list_item_dialog_title">Edit item</string>
-    <string name="edit_list_item_dialog_hint">Description</string>
     <string name="edit_list_item_dialog_ok">Save</string>
     <string name="edit_list_item_dialog_cancel">Cancel</string>
 
     <string name="add_list_item_dialog_title">Add new item</string>
-    <string name="add_list_item_dialog_hint">Description</string>
     <string name="add_list_item_dialog_ok">Add</string>
     <string name="add_list_item_dialog_cancel">Cancel</string>
+
+    <string name="list_item_dialog_hint">description</string>
+    <string name="action_edit">Edit</string>
 
 </resources>

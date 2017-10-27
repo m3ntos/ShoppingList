@@ -38,11 +38,11 @@ class MainActivity : AppCompatActivity() {
     private fun addNewShoppingList() {
         EditTextDialog.newInstance(
                 title = R.string.add_list_dialog_title,
-                hint = R.string.add_list_dialog_hint,
+                hint = R.string.list_dialog_hint,
                 yesButtonText = R.string.add_list_dialog_ok,
                 noButtonText = R.string.add_list_dialog_cancel,
                 text = null
-        ).attachDialogListener({ text ->
+        ).onPositiveBtnClick({ text ->
             val name = if (text.isNullOrEmpty()) getString(R.string.new_shopping_list) else text
             doAsync { shoppingListDao.addShoppingList(ShoppingList(name = name)) }
         }).show(supportFragmentManager, "AddListDialog")

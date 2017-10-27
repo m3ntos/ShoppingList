@@ -34,7 +34,7 @@ class EditTextDialog : AppCompatDialogFragment() {
         return builder.create().apply { showKeyboard(this) }
     }
 
-    fun attachDialogListener(listener: (String?) -> Unit): EditTextDialog {
+    fun onPositiveBtnClick(listener: (String?) -> Unit): EditTextDialog {
         this.listener = listener
         return this
     }

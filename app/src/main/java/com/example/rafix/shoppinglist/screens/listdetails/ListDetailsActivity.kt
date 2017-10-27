@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.data.AppDatabase
 import com.example.rafix.shoppinglist.data.ShoppingListAndItems
+import com.example.rafix.shoppinglist.data.model.ShoppingList
 import com.example.rafix.shoppinglist.data.model.ShoppingListEntry
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListEntryBinding
 import com.example.rafix.shoppinglist.utils.EditTextDialog
@@ -31,10 +34,10 @@ class ListDetailsActivity : AppCompatActivity() {
     private val shoppingListId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
     private val isArchived: Boolean by lazy { intent.getBooleanExtra(ARG_IS_ARCHIVED, false) }
 
-
     private lateinit var recyclerViewAdapter: LastAdapter
 
     private val items = ArrayList<ShoppingListEntry>()
+    private var shoppingList: ShoppingList? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,19 @@ class ListDetailsActivity : AppCompatActivity() {
 
         if (isArchived) fab.hide()
         fab.setOnClickListener { addNewShoppingLisItem() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_list_details, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_edit -> editShoppingListName()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     private fun setupToolbar() {
@@ -93,35 +109,28 @@ class ListDetailsActivity : AppCompatActivity() {
         diff.dispatchUpdatesTo(recyclerViewAdapter)
 
         showNoItemsMessage(items.isEmpty())
+
+        shoppingList = listAndItems?.shoppingList
+        setToolbarTitle(shoppingList?.name)
     }
 
     private fun addNewShoppingLisItem() {
-        EditTextDialog.newInstance(
-                title = R.string.add_list_item_dialog_title,
-                hint = R.string.add_list_item_dialog_hint,
-                yesButtonText = R.string.add_list_item_dialog_ok,
-                noButtonText = R.string.add_list_item_dialog_cancel,
-                text = null
-        ).attachDialogListener({ text ->
+        showAddNewItemDialog().onPositiveBtnClick({ text ->
             val emptyItemText = getString(R.string.new_shopping_list_item)
             val itemText = if (text.isNullOrEmpty()) emptyItemText else text
 
             val item = ShoppingListEntry(shoppingListId, itemText)
             doAsync { shoppingListDao.addOrUpdateListItem(item) }
-        }).show(supportFragmentManager, "AddItemDialog")
+        })
     }
 
     private fun editItem(item: ShoppingListEntry?) {
         item?.let {
-            EditTextDialog.newInstance(
-                    title = R.string.edit_list_item_dialog_title,
-                    hint = R.string.edit_list_item_dialog_hint,
-                    yesButtonText = R.string.edit_list_item_dialog_ok,
-                    noButtonText = R.string.edit_list_item_dialog_cancel,
-                    text = item.description
-            ).attachDialogListener({ text ->
-                doAsync { shoppingListDao.addOrUpdateListItem(item.copy(description = text)) }
-            }).show(supportFragmentManager, "EditItemDialog")
+            showEditItemDialog(it.description).onPositiveBtnClick({ text ->
+                doAsync {
+                    shoppingListDao.addOrUpdateListItem(item.copy(description = text))
+                }
+            })
         }
     }
 
@@ -135,6 +144,17 @@ class ListDetailsActivity : AppCompatActivity() {
         }
     }
 
+    private fun editShoppingListName() {
+        showEditListNameDialog(shoppingList?.name)
+                .onPositiveBtnClick { text ->
+                    doAsync {
+                        val list = shoppingListDao.getShoppingList(shoppingListId)
+                        list.name = text
+                        shoppingListDao.updateShoppingList(list)
+                    }
+                }
+    }
+
     private fun setToolbarTitle(title: String?) {
         toolbar_layout.title = title
     }
@@ -142,4 +162,29 @@ class ListDetailsActivity : AppCompatActivity() {
     private fun showNoItemsMessage(show: Boolean) {
         listEmpty.visibility = if (show) View.VISIBLE else View.GONE
     }
+
+    private fun showEditListNameDialog(text: String?) = EditTextDialog.newInstance(
+            title = R.string.edit_list_dialog_title,
+            hint = R.string.list_dialog_hint,
+            yesButtonText = R.string.edit_item_dialog_ok,
+            noButtonText = R.string.edit_item_dialog_cancel,
+            text = text
+    ).apply { show(supportFragmentManager, "EditItemDialog") }
+
+
+    private fun showEditItemDialog(text: String?) = EditTextDialog.newInstance(
+            title = R.string.edit_list_item_dialog_title,
+            hint = R.string.list_item_dialog_hint,
+            yesButtonText = R.string.edit_list_item_dialog_ok,
+            noButtonText = R.string.edit_list_item_dialog_cancel,
+            text = text
+    ).apply { show(supportFragmentManager, "EditItemDialog") }
+
+    private fun showAddNewItemDialog() = EditTextDialog.newInstance(
+            title = R.string.add_list_item_dialog_title,
+            hint = R.string.list_item_dialog_hint,
+            yesButtonText = R.string.add_list_item_dialog_ok,
+            noButtonText = R.string.add_list_item_dialog_cancel,
+            text = null
+    ).apply { show(supportFragmentManager, "AddItemDialog") }
 }
