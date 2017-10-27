@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.example.rafix.shoppinglist.data.model.ShoppingListItem" />
+            type="com.example.rafix.shoppinglist.data.model.ShoppingListEntry" />
     </data>
 
     <android.support.constraint.ConstraintLayout

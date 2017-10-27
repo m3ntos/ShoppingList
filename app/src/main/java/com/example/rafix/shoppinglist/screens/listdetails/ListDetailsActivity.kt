@@ -10,8 +10,8 @@ import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
 import com.example.rafix.shoppinglist.data.AppDatabase
 import com.example.rafix.shoppinglist.data.ShoppingListAndItems
-import com.example.rafix.shoppinglist.data.model.ShoppingListItem
-import com.example.rafix.shoppinglist.databinding.ItemShoppingListItemBinding
+import com.example.rafix.shoppinglist.data.model.ShoppingListEntry
+import com.example.rafix.shoppinglist.databinding.ItemShoppingListEntryBinding
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
@@ -34,7 +34,7 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private lateinit var recyclerViewAdapter: LastAdapter
 
-    private val items = ArrayList<ShoppingListItem>()
+    private val items = ArrayList<ShoppingListEntry>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,13 +63,13 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private fun setupArchivedItemsAdapter() {
         recyclerViewAdapter = LastAdapter(items, BR.item)
-                .map<ShoppingListItem>(R.layout.item_shopping_list_item_archived)
+                .map<ShoppingListEntry>(R.layout.item_shopping_list_entry_archived)
                 .into(recyclerView)
     }
 
     private fun setupActiveItemsAdapter() {
         recyclerViewAdapter = LastAdapter(items, BR.item)
-                .map<ShoppingListItem, ItemShoppingListItemBinding>(R.layout.item_shopping_list_item) {
+                .map<ShoppingListEntry, ItemShoppingListEntryBinding>(R.layout.item_shopping_list_entry) {
                     onBind {
                         val item = it.binding.item
                         it.binding.delete.setOnClickListener { deleteItem(item) }
@@ -88,7 +88,7 @@ class ListDetailsActivity : AppCompatActivity() {
     private fun updateItems(listAndItems: ShoppingListAndItems?) {
         val newItemsList = listAndItems?.items ?: ArrayList()
 
-        val diff = DiffUtil.calculateDiff(ShoppingListItem.DiffCallback(items, newItemsList))
+        val diff = DiffUtil.calculateDiff(ShoppingListEntry.DiffCallback(items, newItemsList))
         items.apply { clear() }.addAll(newItemsList)
         diff.dispatchUpdatesTo(recyclerViewAdapter)
 
@@ -106,12 +106,12 @@ class ListDetailsActivity : AppCompatActivity() {
             val emptyItemText = getString(R.string.new_shopping_list_item)
             val itemText = if (text.isNullOrEmpty()) emptyItemText else text
 
-            val item = ShoppingListItem(shoppingListId, itemText)
+            val item = ShoppingListEntry(shoppingListId, itemText)
             doAsync { shoppingListDao.addOrUpdateListItem(item) }
         }).show(supportFragmentManager, "AddItemDialog")
     }
 
-    private fun editItem(item: ShoppingListItem?) {
+    private fun editItem(item: ShoppingListEntry?) {
         item?.let {
             EditTextDialog.newInstance(
                     title = R.string.edit_list_item_dialog_title,
@@ -125,11 +125,11 @@ class ListDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteItem(item: ShoppingListItem?) {
+    private fun deleteItem(item: ShoppingListEntry?) {
         item?.let { doAsync { shoppingListDao.deleteShoppingListItem(it) } }
     }
 
-    private fun checkItem(item: ShoppingListItem?) {
+    private fun checkItem(item: ShoppingListEntry?) {
         item?.let {
             doAsync { shoppingListDao.addOrUpdateListItem(it.copy(checked = !it.checked)) }
         }

@@ -3,7 +3,7 @@ package com.example.rafix.shoppinglist.data
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import com.example.rafix.shoppinglist.data.model.ShoppingList
-import com.example.rafix.shoppinglist.data.model.ShoppingListItem
+import com.example.rafix.shoppinglist.data.model.ShoppingListEntry
 
 
 /**
@@ -31,10 +31,10 @@ interface ShoppingListDao {
     fun getShoppingListAndItems(listId: Long): LiveData<ShoppingListAndItems>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addOrUpdateListItem(item: ShoppingListItem)
+    fun addOrUpdateListItem(item: ShoppingListEntry)
 
     @Delete
-    fun deleteShoppingListItem(item: ShoppingListItem)
+    fun deleteShoppingListItem(item: ShoppingListEntry)
 }
 
 class ShoppingListAndItems {
@@ -43,5 +43,5 @@ class ShoppingListAndItems {
     lateinit var shoppingList: ShoppingList
 
     @Relation(parentColumn = "id", entityColumn = "shoppingListId")
-    var items: List<ShoppingListItem> = ArrayList<ShoppingListItem>()
+    var items: List<ShoppingListEntry> = ArrayList<ShoppingListEntry>()
 }

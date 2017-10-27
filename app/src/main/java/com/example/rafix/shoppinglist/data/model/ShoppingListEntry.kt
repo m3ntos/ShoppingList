@@ -13,15 +13,15 @@ import android.support.v7.util.DiffUtil
         childColumns = arrayOf("shoppingListId"),
         onDelete = ForeignKey.CASCADE))
 )
-data class ShoppingListItem(
+data class ShoppingListEntry(
         var shoppingListId: Long,
         var description: String? = null,
         @PrimaryKey(autoGenerate = true) var id: Long = 0,
         var checked: Boolean = false
 ) {
     class DiffCallback(
-            private val oldList: List<ShoppingListItem>,
-            private val newList: List<ShoppingListItem>
+            private val oldList: List<ShoppingListEntry>,
+            private val newList: List<ShoppingListEntry>
     ) : DiffUtil.Callback() {
 
         override fun getOldListSize() = oldList.size
