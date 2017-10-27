@@ -14,7 +14,6 @@ import com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,10 +53,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showListDetails(id: Long, name: String) {
-        startActivity<ListDetailsActivity>(
-                ListDetailsActivity.ARG_LIST_ID to id,
-                ListDetailsActivity.ARG_LIST_NAME to name
-        )
+        ListDetailsActivity.start(this) {
+            it.listId = id
+            it.listName = name
+        }
     }
 
     inner class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

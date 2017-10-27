@@ -17,7 +17,6 @@ import com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.fragment_active_lists.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * Created by Rafal on 25.10.2017.
@@ -80,10 +79,10 @@ class ActiveListsFragment : Fragment() {
 
     private fun showListDetails(item: ShoppingList?) {
         item?.let {
-            startActivity<ListDetailsActivity>(
-                    ListDetailsActivity.ARG_LIST_ID to it.id,
-                    ListDetailsActivity.ARG_LIST_NAME to (it.name ?: "")
-            )
+            ListDetailsActivity.start(activity) {
+                it.listId = item.id
+                it.listName = item.name
+            }
         }
     }
 }

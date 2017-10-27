@@ -1,6 +1,7 @@
 package com.example.rafix.shoppinglist.screens.listdetails
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
@@ -16,25 +17,31 @@ import com.example.rafix.shoppinglist.databinding.ItemShoppingListEntryBinding
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
+import me.eugeniomarletti.extras.ActivityCompanion
+import me.eugeniomarletti.extras.intent.IntentExtra
+import me.eugeniomarletti.extras.intent.base.Boolean
+import me.eugeniomarletti.extras.intent.base.Long
+import me.eugeniomarletti.extras.intent.base.String
 
 
 class ListDetailsActivity : AppCompatActivity() {
 
-    companion object {
-        val ARG_LIST_ID = "ARG_LIST_ID"
-        val ARG_LIST_NAME = "ARG_LIST_NAME"
-        val ARG_IS_ARCHIVED = "ARG_IS_ARCHIVED"
+    companion object : ActivityCompanion<IntentOptions>(IntentOptions, ListDetailsActivity::class)
+
+    object IntentOptions {
+        var Intent.listName by IntentExtra.String()
+        var Intent.isArchived by IntentExtra.Boolean(defaultValue = false)
+        var Intent.listId by IntentExtra.Long(defaultValue = 0)
     }
 
-    private val listId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
-    private val isArchived: Boolean by lazy { intent.getBooleanExtra(ARG_IS_ARCHIVED, false) }
+    private val listId: Long by lazy { intent.options { it.listId } }
+    private val isArchived: Boolean by lazy { intent.options { it.isArchived } }
 
-    private val viewModel: ListDetailsViewModel by lazy { ListDetailsViewModel(listId, application) }
-
-    private lateinit var recyclerViewAdapter: LastAdapter
+    private val viewModel by lazy { ListDetailsViewModel(listId, application) }
 
     private val items = ArrayList<ShoppingListEntry>()
     private var shoppingList: ShoppingList? = null
+    private lateinit var recyclerViewAdapter: LastAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +70,7 @@ class ListDetailsActivity : AppCompatActivity() {
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        setToolbarTitle(intent.getStringExtra(ARG_LIST_NAME))
+        setToolbarTitle(intent.options { it.listName })
     }
 
     private fun setupRecyclerView() {
