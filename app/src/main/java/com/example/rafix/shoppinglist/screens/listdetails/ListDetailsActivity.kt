@@ -10,15 +10,12 @@ import android.view.MenuItem
 import android.view.View
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
-import com.example.rafix.shoppinglist.data.AppDatabase
-import com.example.rafix.shoppinglist.data.ShoppingListAndItems
 import com.example.rafix.shoppinglist.data.model.ShoppingList
 import com.example.rafix.shoppinglist.data.model.ShoppingListEntry
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListEntryBinding
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*
-import org.jetbrains.anko.doAsync
 
 
 class ListDetailsActivity : AppCompatActivity() {
@@ -29,10 +26,10 @@ class ListDetailsActivity : AppCompatActivity() {
         val ARG_IS_ARCHIVED = "ARG_IS_ARCHIVED"
     }
 
-    private val shoppingListDao by lazy { AppDatabase.getInstance(this).shoppingListDao() }
-
-    private val shoppingListId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
+    private val listId: Long by lazy { intent.getLongExtra(ARG_LIST_ID, 0) }
     private val isArchived: Boolean by lazy { intent.getBooleanExtra(ARG_IS_ARCHIVED, false) }
+
+    private val viewModel: ListDetailsViewModel by lazy { ListDetailsViewModel(listId, application) }
 
     private lateinit var recyclerViewAdapter: LastAdapter
 
@@ -42,13 +39,12 @@ class ListDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_details)
-
         setupToolbar()
         setupRecyclerView()
-        observeItemChanges()
+        setupFab()
 
-        if (!isArchived) fab.show()
-        fab.setOnClickListener { addNewShoppingLisItem() }
+        viewModel.shoppingList.observe(this, Observer { updateShoppingList(it) })
+        viewModel.shoppingListItems.observe(this, Observer { updateItems(it) })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -58,7 +54,7 @@ class ListDetailsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_edit -> editShoppingListName()
+            R.id.action_edit -> editShoppingListOnClick()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -72,9 +68,13 @@ class ListDetailsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(this)
-
         if (isArchived) setupArchivedItemsAdapter()
         else setupActiveItemsAdapter()
+    }
+
+    private fun setupFab() {
+        if (!isArchived) fab.show()
+        fab.setOnClickListener { addNewListEntryOnClick() }
     }
 
     private fun setupArchivedItemsAdapter() {
@@ -88,71 +88,47 @@ class ListDetailsActivity : AppCompatActivity() {
                 .map<ShoppingListEntry, ItemShoppingListEntryBinding>(R.layout.item_shopping_list_entry) {
                     onBind {
                         val item = it.binding.item
-                        it.binding.delete.setOnClickListener { deleteItem(item) }
+                        it.binding.delete.setOnClickListener { viewModel.removeListItem(item) }
                     }
-                    onClick { checkItem(it.binding.item) }
-                    onLongClick { editItem(it.binding.item) }
+                    onClick { viewModel.toggleItemCheck(it.binding.item?.id) }
+                    onLongClick { editListEntryOnClick(it.binding.item) }
                 }
                 .into(recyclerView)
     }
 
-    private fun observeItemChanges() {
-        shoppingListDao.getShoppingListAndItems(shoppingListId).observe(this,
-                Observer { updateItems(it) })
+    private fun addNewListEntryOnClick() {
+        showAddNewItemDialog().onPositiveBtnClick({ text ->
+            val emptyItemText = getString(R.string.new_shopping_list_item)
+            val itemText = if (text.isNullOrEmpty()) emptyItemText else text
+            viewModel.addNewListEntry(itemText)
+        })
     }
 
-    private fun updateItems(listAndItems: ShoppingListAndItems?) {
-        val newItemsList = listAndItems?.items ?: ArrayList()
+    private fun updateShoppingList(shoppingList: ShoppingList?) {
+        this.shoppingList = shoppingList
+        setToolbarTitle(shoppingList?.name)
+    }
+
+    private fun updateItems(list: List<ShoppingListEntry>?) {
+        val newItemsList = list ?: ArrayList()
 
         val diff = DiffUtil.calculateDiff(ShoppingListEntry.DiffCallback(items, newItemsList))
         items.apply { clear() }.addAll(newItemsList)
         diff.dispatchUpdatesTo(recyclerViewAdapter)
-
         showNoItemsMessage(items.isEmpty())
-
-        shoppingList = listAndItems?.shoppingList
-        setToolbarTitle(shoppingList?.name)
     }
 
-    private fun addNewShoppingLisItem() {
-        showAddNewItemDialog().onPositiveBtnClick({ text ->
-            val emptyItemText = getString(R.string.new_shopping_list_item)
-            val itemText = if (text.isNullOrEmpty()) emptyItemText else text
-
-            val item = ShoppingListEntry(shoppingListId, itemText)
-            doAsync { shoppingListDao.addOrUpdateListItem(item) }
+    private fun editListEntryOnClick(item: ShoppingListEntry?) {
+        if (item == null) return
+        showEditItemDialog(item.description).onPositiveBtnClick({ text ->
+            viewModel.setListItemDescription(item.id, text)
         })
     }
 
-    private fun editItem(item: ShoppingListEntry?) {
-        item?.let {
-            showEditItemDialog(it.description).onPositiveBtnClick({ text ->
-                doAsync {
-                    shoppingListDao.addOrUpdateListItem(item.copy(description = text))
-                }
-            })
+    private fun editShoppingListOnClick() {
+        showEditListNameDialog(shoppingList?.name).onPositiveBtnClick { text ->
+            viewModel.setListName(text)
         }
-    }
-
-    private fun deleteItem(item: ShoppingListEntry?) {
-        item?.let { doAsync { shoppingListDao.deleteShoppingListItem(it) } }
-    }
-
-    private fun checkItem(item: ShoppingListEntry?) {
-        item?.let {
-            doAsync { shoppingListDao.addOrUpdateListItem(it.copy(checked = !it.checked)) }
-        }
-    }
-
-    private fun editShoppingListName() {
-        showEditListNameDialog(shoppingList?.name)
-                .onPositiveBtnClick { text ->
-                    doAsync {
-                        val list = shoppingListDao.getShoppingList(shoppingListId)
-                        list.name = text
-                        shoppingListDao.updateShoppingList(list)
-                    }
-                }
     }
 
     private fun setToolbarTitle(title: String?) {

@@ -19,7 +19,10 @@ interface ShoppingListDao {
     fun getArchivedShoppingLists(): LiveData<List<ShoppingList>>
 
     @Query("SELECT * from shoppingList WHERE id = :id")
-    fun getShoppingList(id: Long): ShoppingList
+    fun getShoppingList(id: Long): LiveData<ShoppingList>
+
+    @Query("SELECT * from shoppingList WHERE id = :id")
+    fun getShoppingListSingle(id: Long): ShoppingList
 
     @Insert
     fun addShoppingList(list: ShoppingList) : Long
@@ -30,21 +33,15 @@ interface ShoppingListDao {
     @Delete
     fun deleteShoppingList(list: ShoppingList)
 
-    @Query("SELECT * from shoppingList WHERE id = :listId")
-    fun getShoppingListAndItems(listId: Long): LiveData<ShoppingListAndItems>
+    @Query("SELECT * from shoppingListEntry WHERE shoppingListId = :listId")
+    fun getShoppingListEntries(listId: Long): LiveData<List<ShoppingListEntry>>
+
+    @Query("SELECT * from shoppingListEntry WHERE id = :id")
+    fun getShoppingListEntry(id: Long): ShoppingListEntry
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addOrUpdateListItem(item: ShoppingListEntry)
+    fun addOrUpdateListEntry(item: ShoppingListEntry)
 
     @Delete
-    fun deleteShoppingListItem(item: ShoppingListEntry)
-}
-
-class ShoppingListAndItems {
-
-    @Embedded
-    lateinit var shoppingList: ShoppingList
-
-    @Relation(parentColumn = "id", entityColumn = "shoppingListId")
-    var items: List<ShoppingListEntry> = ArrayList<ShoppingListEntry>()
+    fun deleteShoppingListEntry(item: ShoppingListEntry)
 }
