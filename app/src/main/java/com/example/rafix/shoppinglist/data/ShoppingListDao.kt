@@ -22,7 +22,7 @@ interface ShoppingListDao {
     fun getShoppingList(id: Long): ShoppingList
 
     @Insert
-    fun addShoppingList(list: ShoppingList)
+    fun addShoppingList(list: ShoppingList) : Long
 
     @Update
     fun updateShoppingList(list: ShoppingList)

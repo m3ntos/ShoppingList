@@ -10,9 +10,11 @@ import com.example.rafix.shoppinglist.data.AppDatabase
 import com.example.rafix.shoppinglist.data.model.ShoppingList
 import com.example.rafix.shoppinglist.screens.active.ActiveListsFragment
 import com.example.rafix.shoppinglist.screens.archived.ArchivedListsFragment
+import com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,8 +46,18 @@ class MainActivity : AppCompatActivity() {
                 text = null
         ).onPositiveBtnClick({ text ->
             val name = if (text.isNullOrEmpty()) getString(R.string.new_shopping_list) else text
-            doAsync { shoppingListDao.addShoppingList(ShoppingList(name = name)) }
+            doAsync {
+                val id = shoppingListDao.addShoppingList(ShoppingList(name = name))
+                showListDetails(id, name!!)
+            }
         }).show(supportFragmentManager, "AddListDialog")
+    }
+
+    private fun showListDetails(id: Long, name: String) {
+        startActivity<ListDetailsActivity>(
+                ListDetailsActivity.ARG_LIST_ID to id,
+                ListDetailsActivity.ARG_LIST_NAME to name
+        )
     }
 
     inner class PagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {

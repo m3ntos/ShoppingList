@@ -47,7 +47,7 @@ class ListDetailsActivity : AppCompatActivity() {
         setupRecyclerView()
         observeItemChanges()
 
-        if (isArchived) fab.hide()
+        if (!isArchived) fab.show()
         fab.setOnClickListener { addNewShoppingLisItem() }
     }
 
