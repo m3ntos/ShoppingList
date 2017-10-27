@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.View
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
@@ -87,7 +86,6 @@ class ListDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateItems(listAndItems: ShoppingListAndItems?) {
-        Log.d("update", "items updated")
         val newItemsList = listAndItems?.items ?: ArrayList()
 
         val diff = DiffUtil.calculateDiff(ShoppingListItem.DiffCallback(items, newItemsList))
