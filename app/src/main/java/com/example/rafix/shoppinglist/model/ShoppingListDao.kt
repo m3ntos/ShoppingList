@@ -2,7 +2,6 @@ package com.example.rafix.shoppinglist.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import android.arch.persistence.room.Embedded
 
 
 /**
@@ -11,10 +10,10 @@ import android.arch.persistence.room.Embedded
 @Dao
 interface ShoppingListDao {
 
-    @Query("SELECT * from shoppingList WHERE NOT archived")
+    @Query("SELECT * from shoppingList WHERE NOT archived ORDER BY creationDate DESC")
     fun getActiveShoppingLists(): LiveData<List<ShoppingList>>
 
-    @Query("SELECT * from shoppingList WHERE archived")
+    @Query("SELECT * from shoppingList WHERE archived ORDER BY creationDate DESC")
     fun getArchivedShoppingLists(): LiveData<List<ShoppingList>>
 
     @Insert
