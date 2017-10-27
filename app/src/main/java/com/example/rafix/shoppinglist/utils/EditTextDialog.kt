@@ -4,10 +4,9 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import com.example.rafix.shoppinglist.R
-import kotlinx.android.synthetic.main.dialog_edit_text.*
 import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 
 /**
@@ -31,7 +30,7 @@ class EditTextDialog : DialogFragment() {
                 .setTitle(getResId(ARG_TITLE))
                 .setPositiveButton(getResId(ARG_YES_BUTTON), { _, _ -> onPositiveButtonClick() })
                 .setNegativeButton(getResId(ARG_NO_BUTTON), null)
-        return builder.create()
+        return builder.create().apply { showKeyboard(this) }
     }
 
     fun attachDialogListener(listener: (String?) -> Unit): EditTextDialog {
@@ -45,6 +44,10 @@ class EditTextDialog : DialogFragment() {
     }
 
     private fun getResId(param: String) = arguments.getInt(param)
+
+    private fun showKeyboard(dialog: AlertDialog){
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+    }
 
     companion object {
 
