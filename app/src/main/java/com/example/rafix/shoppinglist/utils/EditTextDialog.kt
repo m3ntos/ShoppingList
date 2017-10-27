@@ -1,9 +1,10 @@
 package com.example.rafix.shoppinglist.utils
 
-import android.app.AlertDialog
+
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatDialogFragment
 import android.view.WindowManager
 import android.widget.EditText
 import com.example.rafix.shoppinglist.R
@@ -12,7 +13,7 @@ import kotlinx.android.synthetic.main.dialog_edit_text.view.*
 /**
  * Created by Rafal on 26.10.2017.
  */
-class EditTextDialog : DialogFragment() {
+class EditTextDialog : AppCompatDialogFragment() {
 
     var listener: ((String?) -> Unit)? = null
 
