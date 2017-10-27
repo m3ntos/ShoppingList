@@ -1,7 +1,9 @@
-package com.example.rafix.shoppinglist.model
+package com.example.rafix.shoppinglist.data
 
 import android.arch.persistence.room.*
 import android.content.Context
+import com.example.rafix.shoppinglist.data.model.ShoppingList
+import com.example.rafix.shoppinglist.data.model.ShoppingListItem
 import com.example.rafix.shoppinglist.utils.SingletonHolder
 import java.util.*
 

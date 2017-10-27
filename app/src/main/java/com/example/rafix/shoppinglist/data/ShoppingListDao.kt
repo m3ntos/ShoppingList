@@ -1,7 +1,9 @@
-package com.example.rafix.shoppinglist.model
+package com.example.rafix.shoppinglist.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import com.example.rafix.shoppinglist.data.model.ShoppingList
+import com.example.rafix.shoppinglist.data.model.ShoppingListItem
 
 
 /**

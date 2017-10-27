@@ -1,4 +1,4 @@
-package com.example.rafix.shoppinglist.archived
+package com.example.rafix.shoppinglist.screens.active
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
@@ -10,29 +10,29 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
+import com.example.rafix.shoppinglist.data.AppDatabase
+import com.example.rafix.shoppinglist.data.model.ShoppingList
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListBinding
-import com.example.rafix.shoppinglist.listdetails.ListDetailsActivity
-import com.example.rafix.shoppinglist.model.AppDatabase
-import com.example.rafix.shoppinglist.model.ShoppingList
+import com.example.rafix.shoppinglist.screens.listdetails.ListDetailsActivity
 import com.github.nitrico.lastadapter.LastAdapter
-import kotlinx.android.synthetic.main.fragment_lists_active.*
+import kotlinx.android.synthetic.main.fragment_active_lists.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * Created by Rafal on 25.10.2017.
  */
-class ArchivedListsFragment : Fragment() {
+class ActiveListsFragment : Fragment() {
 
     private val shoppingListDao by lazy { AppDatabase.getInstance(activity).shoppingListDao() }
 
-    private val archivedLists = ArrayList<ShoppingList>()
+    private val activeLists = ArrayList<ShoppingList>()
 
     private lateinit var recyclerViewAdapter: LastAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_lists_archived, container, false)
+        return inflater.inflate(R.layout.fragment_active_lists, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -40,33 +40,33 @@ class ArchivedListsFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerViewAdapter = LastAdapter(archivedLists, BR.item)
+        recyclerViewAdapter = LastAdapter(activeLists, BR.item)
                 .map<ShoppingList, ItemShoppingListBinding>(R.layout.item_shopping_list) {
                     onBind {
                         it.binding.item?.let { item ->
-                            it.binding.unarchive.setOnClickListener { unarchiveItem(item) }
+                            it.binding.archive.setOnClickListener { archiveItem(item) }
                             it.binding.delete.setOnClickListener { deleteItem(item) }
                         }
                     }
                     onClick { showListDetails(it.binding.item) }
                 }.into(recyclerView)
 
-        shoppingListDao.getArchivedShoppingLists()
+        shoppingListDao.getActiveShoppingLists()
                 .observe(this, Observer { updateItems(it) })
     }
 
     private fun updateItems(newList: List<ShoppingList>?) {
         val newItemsList = newList ?: ArrayList()
 
-        val diff = DiffUtil.calculateDiff(ShoppingList.DiffCallback(archivedLists, newItemsList))
-        archivedLists.apply { clear() }.addAll(newItemsList)
+        val diff = DiffUtil.calculateDiff(ShoppingList.DiffCallback(activeLists, newItemsList))
+        activeLists.apply { clear() }.addAll(newItemsList)
         diff.dispatchUpdatesTo(recyclerViewAdapter)
 
-        showNoItemsMessage(archivedLists.isEmpty())
+        showNoItemsMessage(activeLists.isEmpty())
     }
 
-    private fun unarchiveItem(item: ShoppingList) {
-        item.archived = false
+    private fun archiveItem(item: ShoppingList) {
+        item.archived = true
         doAsync { shoppingListDao.updateShoppingList(item) }
     }
 
@@ -82,8 +82,7 @@ class ArchivedListsFragment : Fragment() {
         item?.let {
             startActivity<ListDetailsActivity>(
                     ListDetailsActivity.ARG_LIST_ID to it.id,
-                    ListDetailsActivity.ARG_LIST_NAME to (it.name ?: ""),
-                    ListDetailsActivity.ARG_IS_ARCHIVED to true
+                    ListDetailsActivity.ARG_LIST_NAME to (it.name ?: "")
             )
         }
     }

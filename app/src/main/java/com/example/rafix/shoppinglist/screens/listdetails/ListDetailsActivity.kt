@@ -1,4 +1,4 @@
-package com.example.rafix.shoppinglist.listdetails
+package com.example.rafix.shoppinglist.screens.listdetails
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
@@ -8,10 +8,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.example.rafix.shoppinglist.BR
 import com.example.rafix.shoppinglist.R
+import com.example.rafix.shoppinglist.data.AppDatabase
+import com.example.rafix.shoppinglist.data.ShoppingListAndItems
+import com.example.rafix.shoppinglist.data.model.ShoppingListItem
 import com.example.rafix.shoppinglist.databinding.ItemShoppingListItemBinding
-import com.example.rafix.shoppinglist.model.AppDatabase
-import com.example.rafix.shoppinglist.model.ShoppingListAndItems
-import com.example.rafix.shoppinglist.model.ShoppingListItem
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import com.github.nitrico.lastadapter.LastAdapter
 import kotlinx.android.synthetic.main.activity_list_details.*

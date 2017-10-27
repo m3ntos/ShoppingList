@@ -1,14 +1,15 @@
-package com.example.rafix.shoppinglist
+package com.example.rafix.shoppinglist.screens
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
-import com.example.rafix.shoppinglist.active.ActiveListsFragment
-import com.example.rafix.shoppinglist.archived.ArchivedListsFragment
-import com.example.rafix.shoppinglist.model.AppDatabase
-import com.example.rafix.shoppinglist.model.ShoppingList
+import com.example.rafix.shoppinglist.R
+import com.example.rafix.shoppinglist.data.AppDatabase
+import com.example.rafix.shoppinglist.data.model.ShoppingList
+import com.example.rafix.shoppinglist.screens.active.ActiveListsFragment
+import com.example.rafix.shoppinglist.screens.archived.ArchivedListsFragment
 import com.example.rafix.shoppinglist.utils.EditTextDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
