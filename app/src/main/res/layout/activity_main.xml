@@ -60,7 +60,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
         android:tint="@android:color/white"
-        app:srcCompat="@drawable/ic_add"
+        app:srcCompat="@drawable/ic_add_black_24dp"
         app:layout_anchor="@+id/container"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior="com.example.rafix.shoppinglist.utils.ScrollAwareFABBehavior"/>

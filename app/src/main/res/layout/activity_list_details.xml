@@ -57,6 +57,6 @@
         app:layout_anchor="@+id/recyclerView"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior="com.example.rafix.shoppinglist.utils.ScrollAwareFABBehavior"
-        app:srcCompat="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_add_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
